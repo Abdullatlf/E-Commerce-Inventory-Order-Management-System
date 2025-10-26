@@ -3,7 +3,8 @@ public class Review {
     private int rating;
     private String comment;
     private String customerId;
-    public Review(String reviewId, int rating, String comment, String customerId){
+    private String productId;
+    public Review(String reviewId,String productId,String customerId, int rating, String comment){
         /*if(rating > 5 || rating < 1){
             throw new IllegalArgumentException("Rating must be between 1 and 5!");
         }*/
