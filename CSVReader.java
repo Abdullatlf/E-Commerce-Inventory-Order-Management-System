@@ -7,8 +7,6 @@ import java.io.IOException;
 
 public class CSVReader{
     //create load method for every CSV file and gather them in one loadFile method
-
-    
     public static void loadCustomersFromCSV(/*need to pass system and file name*/){
     String path = "dataset/customers.csv";
     String line = "";
@@ -23,7 +21,7 @@ public class CSVReader{
 
             //System.out.println(line);
 
-            Customer customer = new Customer(/*attributes extracted from csv file */);
+            Customer customer = new Customer(customerId, name, email);
             //needs to add customer to list
             //system.registerCustomer(customer);
 
@@ -53,8 +51,15 @@ public class CSVReader{
             //maybe it needs try and catch for numberformatexception
             int rating = Integer.parseInt(values[3]);
             String comment = values[4];
-            Review review = new Review(reviewId, productId, customerId, rating, comment);
-            //system.addReview(productId, review);
+            Review review = new Review(reviewId, rating, comment, customerId);
+
+            //Product product = searchProductById(productId);
+            //if(product != null){
+            // product.addReview(review);
+            //}else{
+            // product not found + productId
+            //}
+            
         }
 
         br.close();
@@ -85,7 +90,6 @@ public class CSVReader{
             int stock = Integer.parseInt(values[3]);
             Product product = new Product(productId, name, price, stock);
             //system.addProduct(product);
-
         }
 
         br.close();
@@ -118,10 +122,12 @@ public class CSVReader{
                 String orderDate = values[4];
                 String status = values[5];
 
-                Order order = new Order(/* attributes */);
+                Order order = new Order(orderId, customerId);
                 //update status
+                //order.updateOrderStatus(status);
 
                 //add products in order
+                //order.addProduct(product);
 
                 //place order
 

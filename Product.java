@@ -14,6 +14,46 @@ public class Product {
         this.stock = stock;
         this.reviews = new LinkedList<Review>();
     }
+
+    public String getId(){
+        return productId;
+    }
+
+    public boolean isOutOfStock(){
+        return stock <= 0;
+    }
+
+    public double getPrice(){
+        return price;
+    }
+
+    public int getStock(){
+        return stock;
+    }
+
+    public void decrementStock(){
+        stock--;
+    }
+    public void incrementStock(){
+        stock++;
+    }
+
+    public String toString() {
+        return "Product{id=" + productId + ", name='" + name + 
+               "', price=" + price + ", stock=" + stock + 
+               ", avgRating=" /*+ getAverageRating()*/ + "}";
+    }
+    public String getName(){
+        return name;
+    }
+
+
+
+
+
+
+
+
     //rating from 0 to 5 condition in main
     public void addReview(Review review){
         //not necessary
@@ -33,7 +73,7 @@ public class Product {
 
     /*public void editReview(Review review){
         reviews.update(review);
-    }
+    }*/
 
     //test ----->
 
@@ -52,7 +92,7 @@ public class Product {
         } 
     }
 
-    public double getAverageReview(){
+    /*public double getAverageReview(){
         if(reviews.empty()){
             System.out.println("No reviews yet!");
         return 0.0;
@@ -69,9 +109,9 @@ public class Product {
 
     public boolean isOutOfStock(){
         return stock <= 0;
-    }
+    }*/
 
-*/
+
     
 
 
