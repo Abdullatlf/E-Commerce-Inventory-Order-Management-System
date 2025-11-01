@@ -5,32 +5,25 @@ public class Product {
     private String name;
     private double price;
     private int stock;
-    private LinkedList<Review> reviews;
+    private LinkedList<Review> reviewList;
 
     Product(String productId, String name, double price, int stock){
         this.productId = productId;
         this.name = name;
         this.price = price;
         this.stock = stock;
-        this.reviews = new LinkedList<Review>();
+        this.reviewList = new LinkedList<Review>();
     }
 
     public String getId(){
         return productId;
     }
-
     public boolean isOutOfStock(){
         return stock <= 0;
     }
-
     public double getPrice(){
         return price;
     }
-
-    public int getStock(){
-        return stock;
-    }
-
     public void decrementStock(){
         stock--;
     }
@@ -41,80 +34,73 @@ public class Product {
     public String toString() {
         return "Product{id=" + productId + ", name='" + name + 
                "', price=" + price + ", stock=" + stock + 
-               ", avgRating=" /*+ getAverageRating()*/ + "}";
+               ", avgRating=" + getAverageRating() + "}";
     }
     public String getName(){
         return name;
     }
-
-
-
-
-
-
-
-
     //rating from 0 to 5 condition in main
-    public void addReview(Review review){
+    public boolean addReview(Review review){
         //not necessary
         /*if(reviews.search(review) != null){
             review.display();
             System.out.println("Review already inserted!");
         }
         else{*/
-        reviews.insert(review);
+        if(review.getRating() > 5 && review.getRating() < 0){
+            System.out.println("Erorr: Rating should be from 1 to 5!");
+            return false;
+        }
+        reviewList.insert(review);
+        return true;
         //}
     }
-    //testing
-    public LinkedList<Review> getReview(){
-        return this.reviews;
-    }
-    
 
-    /*public void editReview(Review review){
-        reviews.update(review);
-    }*/
-
-    //test ----->
-
-    
-
-    public void display() {
-        System.out.println("Reviews for " + name + ":");
-        if (reviews.empty()) {
-            System.out.println("No reviews yet.");
-            return;
+    public void displayReviews(){
+        if(reviewList.empty()){
+            System.out.println("No reviews were made!");
+        }else{
+            reviewList.findFirst();
+        for (int i = 0 ; i< reviewList.getSize() ; i++) {
+            System.out.println(reviewList.retrieve().toString());
+            reviewList.findNext();
         }
-        Node<Review> current = reviews.getHead();
-        while (current != null) {
-            current.data.display();
-            current = current.next;
-        } 
+        }
     }
 
-    /*public double getAverageReview(){
-        if(reviews.empty()){
-            System.out.println("No reviews yet!");
-        return 0.0;
+    public Review searchByReviewId(String reviewId){
+        if(!reviewList.empty()){
+            reviewList.findFirst();
+            while(!reviewList.empty()){
+                if(reviewList.retrieve().getId().equals(reviewId)){
+                    return reviewList.retrieve();
+                }
+                reviewList.findNext();
+            }if(reviewList.retrieve().getId().equals(reviewId)){
+                return reviewList.retrieve();
+            }
         }
-        int sum = 0;
-        Node<Review> current = reviews.getHead();
-        while(current != null){
-            sum += current.data.getRating();
-            current = current.next;
-        }
-        double average = (double)sum/reviews.size();
-        return average;
+        return null;
     }
 
-    public boolean isOutOfStock(){
-        return stock <= 0;
-    }*/
+    public boolean editReview(Review review, int newRating, String newComment){
+        if(searchByReviewId(review.getId()) == null){
+            System.out.println("Review not found!");
+            return false;
+        }
+        Review newReview = new Review(review.getId(), newRating, newComment, review.getCustomerId());
+        reviewList.update(newReview);
+        return true;
+    }
 
+    public double getAverageRating(){
+        reviewList.findFirst();
+        double sum = 0;
+        for(int i = 0 ; i <reviewList.getSize() ; i++){
+            sum += reviewList.retrieve().getRating();
+            reviewList.findNext();
+        }
+        return sum/reviewList.getSize();
+    }
 
-    
-
-
-
-    
 }

@@ -8,24 +8,23 @@ public class Review {
         /*if(rating > 5 || rating < 1){
             throw new IllegalArgumentException("Rating must be between 1 and 5!");
         }*/
+        this.reviewId = reviewId;
         this.rating = rating;
         this.comment = comment;
         this.customerId = customerId;
     }
-
-    public void display(){
-        System.out.printf("Rating: %d \nComment: %s\n",rating,comment);
-    }
-
     //testing in main
     public int getRating(){
         return rating;
     }
-    //for search in product
-    public String getReviewId() {
+    public String toString(){
+        return "Review{id="+ reviewId +", rating=" + rating + ", comment='" + comment + 
+               "', customerId=" + customerId + /* ", date=" + reviewDate + */"}";
+    }
+    public String getId(){
         return reviewId;
     }
-    
-
-
+    public String getCustomerId(){
+        return customerId;
+    }
 }

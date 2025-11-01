@@ -64,14 +64,8 @@ public class LinkedList<T> {
     public int getSize(){
         return size;
     }
-    public T search(T val){
-            Node<T> current = head;
-            while(current != null){
-                if(current.data.equals(val))
-                    return current.data;
-                current = current.next;
-            }
-            return null;
+    public void update(T val){
+        current.data = val;
     }
 
    /*  public void update(T val){

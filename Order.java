@@ -10,7 +10,8 @@ public class Order {
     private LinkedList<Product> productList;
 
     public Order(String orderId,String customerId){
-        // I think orderId should be automaticly generated
+        // I think orderId should be automaticly generated 
+        // I think it will be in the main since we can count the orders
         this.orderId = orderId;
         this.customerId = customerId;
         this.productList = new LinkedList<Product>();
@@ -18,9 +19,18 @@ public class Order {
         status ="pending";
         this.orderDate = LocalDate.now();
     }
+    //need it for file data
+    public Order(String orderId, String customerId, String status){
+        this.orderId =orderId;
+        this.customerId = customerId;
+        this.productList = new LinkedList<Product>();
+        this.status = status;
+        this.totalPrice = 0.0;
+        this.orderDate = LocalDate.now();
+    }
 
     public boolean addProduct(Product product){
-        //i think we can put it in main
+        //i think we can put it in main or in place order method
         if(status.equalsIgnoreCase("shipped")){
             System.out.println("\nOrder already shipped!\n");
             return false;
@@ -36,6 +46,7 @@ public class Order {
         product.decrementStock();
         return true;
     }
+
 
     public Product searchProductById(String productId){
         if(!productList.empty()){ 
@@ -62,7 +73,6 @@ public class Order {
             System.out.println("Product not found! or ProductList is empty");
             return false;
         }
-
         searchProductById(productId).incrementStock();
         totalPrice -= searchProductById(productId).getPrice();
         productList.remove();
@@ -79,11 +89,12 @@ public class Order {
     public void displayProducts(){
         if(productList.empty()){
             System.out.println("the list is empty!");
-        }
-        productList.findFirst();
+        }else{
+            productList.findFirst();
         for(int i = 1; i <= productList.getSize(); i++){
             System.out.println(productList.retrieve().toString());
             productList.findNext();
+        }
         }
     }
     
@@ -93,6 +104,7 @@ public class Order {
     public String getId(){
         return orderId;
     }
+    
 
     
 }

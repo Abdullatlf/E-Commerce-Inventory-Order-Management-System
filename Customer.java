@@ -12,7 +12,6 @@ public class Customer{
     }
     public void createOrder(Order order){
         orderList.insert(order);
-        //order.updateStatus("pending"); ----> changed when order constructor created
     } 
 
     public Order searchOrder(String orderId){
@@ -26,15 +25,16 @@ public class Customer{
             }
             if(orderList.retrieve().getId().equals(orderId))
                 return orderList.retrieve();
-        }     
+        }
         return null;
     }
 
-    public boolean cancel(String orderId){
-        if(/*orderList.empty() (already checked) */ searchOrder(orderId) == null){
+    public boolean cancel(Order order){
+        if(/*orderList.empty() (already checked) */ searchOrder(order.getId()) == null){
+            System.out.println("No orders were made! or order not found!");
             return false;
         }
-        searchOrder(orderId).updateOrderStatus("canceled");
+        searchOrder(order.getId()).updateOrderStatus("canceled");
         return true;
     }
 
@@ -42,6 +42,19 @@ public class Customer{
         return customerId;
     }
 
+    public void displayOrders(){
+        if(orderList.empty()){
+            System.out.println("No orders were made!");
+        }
+        orderList.findFirst();
+        for (int i = 1; i <= orderList.getSize(); i++) {
+            System.out.println(orderList.retrieve().toString());
+            orderList.findNext();    
+        }
+    }
+
+    
+    @Override
     public String toString() {
         return "Customer{id=" + customerId + ", name='" + name + 
                "', email='" + email + "', totalOrders=" + orderList.getSize() + "}";
