@@ -112,6 +112,11 @@ public class LinkedList<T> {
 
 
 
-    
+
     
 }
+
+
+
+    
+    

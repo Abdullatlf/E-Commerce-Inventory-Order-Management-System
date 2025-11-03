@@ -18,6 +18,9 @@ public class Product {
     public String getId(){
         return productId;
     }
+    public int getStock(){
+        return stock;
+    }
     public boolean isOutOfStock(){
         return stock <= 0;
     }
@@ -39,21 +42,13 @@ public class Product {
     public String getName(){
         return name;
     }
-    //rating from 0 to 5 condition in main
     public boolean addReview(Review review){
-        //not necessary
-        /*if(reviews.search(review) != null){
-            review.display();
-            System.out.println("Review already inserted!");
-        }
-        else{*/
         if(review.getRating() > 5 && review.getRating() < 0){
             System.out.println("Erorr: Rating should be from 1 to 5!");
             return false;
         }
         reviewList.insert(review);
         return true;
-        //}
     }
 
     public void displayReviews(){

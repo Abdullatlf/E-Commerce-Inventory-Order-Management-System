@@ -88,7 +88,7 @@ public class Order {
 
     public void displayProducts(){
         if(productList.empty()){
-            System.out.println("the list is empty!");
+            System.out.println("No product were add yet");
         }else{
             productList.findFirst();
         for(int i = 1; i <= productList.getSize(); i++){
@@ -108,3 +108,4 @@ public class Order {
 
     
 }
+

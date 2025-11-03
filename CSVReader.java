@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -7,7 +6,7 @@ import java.io.IOException;
 
 public class CSVReader{
     //create load method for every CSV file and gather them in one loadFile method
-    public static void loadCustomersFromCSV(/*need to pass system and file name*/){
+    public static void loadCustomersFromCSV(ECommerceSystem system){
     String path = "dataset/customers.csv";
     String line = "";
     try{
@@ -22,12 +21,10 @@ public class CSVReader{
             //System.out.println(line);
 
             Customer customer = new Customer(customerId, name, email);
-            //needs to add customer to list
-            //system.registerCustomer(customer);
-
+            system.registerCustomer(customer);
         }
         br.close();
-        System.out.println("Customers loaded successfully from " /*+ filename */);
+        System.out.println("Customers loaded successfully from customers.csv");
     }catch(FileNotFoundException e){
         e.printStackTrace();
     }catch(IOException e){
@@ -72,10 +69,10 @@ public class CSVReader{
 
 }
 
-    public static void loadProductsFromCSV(/*system and filename */){
+    public static void loadProductsFromCSV(ECommerceSystem system){
 
 
-    String path = "dataset/prodcuts.csv";
+    String path = "dataset/products.csv";
     String line ="";
 
     try {
@@ -89,11 +86,12 @@ public class CSVReader{
             double price = Double.parseDouble(values[2]);
             int stock = Integer.parseInt(values[3]);
             Product product = new Product(productId, name, price, stock);
-            //system.addProduct(product);
+            system.addProduct(product);
         }
 
+        
         br.close();
-        System.out.println("Products loaded successfully from "/*+ filename */);
+        System.out.println("Products loaded successfully from products.csv");
         
     } catch (FileNotFoundException e) {
         e.printStackTrace();
