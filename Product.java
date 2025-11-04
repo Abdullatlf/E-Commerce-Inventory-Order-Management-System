@@ -42,8 +42,8 @@ public class Product {
     public String getName(){
         return name;
     }
-    public boolean addReview(Review review){
-        if(review.getRating() > 5 && review.getRating() < 0){
+    public boolean createReview(Review review){
+        if(review.getRating() > 5 || review.getRating() < 0){
             System.out.println("Erorr: Rating should be from 1 to 5!");
             return false;
         }

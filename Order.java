@@ -104,6 +104,16 @@ public class Order {
     public String getId(){
         return orderId;
     }
+    public void setTotalPrice(double newTotalPrice){
+        totalPrice = newTotalPrice;
+    }
+    public void setOrderDate(LocalDate newOrderDate){
+        orderDate = newOrderDate;
+
+    }
+    public LocalDate getOrderDate(){
+        return orderDate;
+    }
     
 
     

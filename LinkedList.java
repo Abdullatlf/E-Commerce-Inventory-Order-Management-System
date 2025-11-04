@@ -1,11 +1,23 @@
 public class LinkedList<T> {
     private Node<T> head;
     private Node<T> current;
+    private Node<T> tail;
     private int size = 0;
 
 
     public LinkedList(){
         head = current = null;
+    }
+    public void insertAtEnd(T val){
+        Node<T> newNode = new Node<T>(val);
+        if(empty()){
+            head = current = tail = newNode;
+        }else{
+            tail.next = newNode;
+            tail = newNode;
+            current = newNode;
+        }
+        size++;
     }
 
     public boolean empty(){
@@ -51,7 +63,7 @@ public class LinkedList<T> {
         tmp = head;
         while(tmp.next != current)
             tmp = tmp.next;
-            
+
         tmp.next = current.next;
     }
         if(current.next == null)
@@ -68,40 +80,8 @@ public class LinkedList<T> {
         current.data = val;
     }
 
-   /*  public void update(T val){
-        if(empty()){
-         current.data = val;
-        }
-    }
+ 
 
-    public int size(){
-        current = head;
-        int count = 0;
-        while(current != null){
-            count++;
-            current = current.next;
-        }
-        return count++;
-
-    }
-
-
-    //test ----->
-
-    public boolean last(){
-        return !empty() && current.next == null;
-    }
-
-    public T retrieve(){
-        if (!empty()) {
-            return current.data;       
-        }
-        return null;
-    }
-    public void findfirst(){
-        current = head;
-    }
-*/
     public Node<T> getHead(){
         return head;
     }
@@ -110,13 +90,22 @@ public class LinkedList<T> {
         return current;
     }
 
+    public boolean display(){
+        if(empty()){
+            System.out.println("List is empty");
+            return false;
+        }else{
+            findFirst();
+            for(int i = 0 ; i < size; i++){
+                System.out.println(current.data.toString());
+                findNext();
+            }
+            return true;
+        }
+    }
 
 
 
-    
+
+ 
 }
-
-
-
-    
-    
