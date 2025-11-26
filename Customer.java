@@ -1,56 +1,67 @@
 public class Customer{
-    String customerId;
-    String name;
-    String email;
-    LinkedList<Order> orderList;
+    public String customerId;
+    public String name;
+    public String email;
+    public BST<Integer,Order> orderList;
 
     public Customer(String customerId, String name, String email){
         this.customerId = customerId;
         this.name = name;
         this.email = email;
-        orderList = new LinkedList<Order>();
+        orderList = new BST<Integer,Order>();
     }
     public void createOrder(Order order){
-        orderList.insert(order);
+        Order copyOrder = new Order(order.getOrderId(), customerId);
+        orderList.insert(copyOrder.getOrderId(),copyOrder);
     } 
 
-    public Order searchOrder(String orderId){
-        if(!orderList.empty()){        
-            orderList.findFirst();
-            while(!orderList.last()){
-                if(orderList.retrieve().getId().equals(orderId))
-                    return orderList.retrieve();
-                
-                orderList.findNext();
-            }
-            if(orderList.retrieve().getId().equals(orderId))
-                return orderList.retrieve();
-        }
+    public Order searchOrderById(int orderId){
+        if(orderList.findKey(orderId))
+            return orderList.retrieve();
         return null;
     }
 
     public boolean cancel(Order order){
-        if(/*orderList.empty() (already checked) */ searchOrder(order.getId()) == null){
+        //changed but maybe logic error
+        Order updatedOrder = searchOrderById(order.getOrderId());
+        if(/*orderList.empty() (already checked) */ updatedOrder == null){
             System.out.println("No orders were made! or order not found!");
             return false;
         }
-        searchOrder(order.getId()).updateOrderStatus("canceled");
+        updatedOrder.updateOrderStatus("canceled");
         return true;
     }
 
-    public String getId(){
+    public String getCustomerId(){
         return customerId;
+    }
+
+    public String getName(){
+        return name;
     }
 
     public void displayOrders(){
         if(orderList.empty()){
-            System.out.println("No orders were made!");
+            System.out.println("No orders were add yet");
+        }else{
+            System.out.println(name+"'s' orders:");
+            orderList.displayTree();
         }
-        orderList.findFirst();
-        for (int i = 1; i <= orderList.getSize(); i++) {
-            System.out.println(orderList.retrieve().toString());
-            orderList.findNext();    
+    }
+
+    public void displayTree(){
+
+        if(orderList.empty()){
+            System.out.println("No orders were add yet");
+        }else{
+            System.out.println(name+"'s' orders:");
+            orderList.printTree();
         }
+
+    }
+
+    public BST<Integer,Order> getOrderList(){
+        return orderList;
     }
 
     

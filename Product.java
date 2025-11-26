@@ -1,13 +1,13 @@
-
 public class Product {
-
-    private String productId;
+    //changed productId to integer
+    private int productId;
     private String name;
     private double price;
     private int stock;
     private LinkedList<Review> reviewList;
 
-    Product(String productId, String name, double price, int stock){
+    //changed productId to integer
+    public Product(int productId, String name, double price, int stock){
         this.productId = productId;
         this.name = name;
         this.price = price;
@@ -15,8 +15,13 @@ public class Product {
         this.reviewList = new LinkedList<Review>();
     }
 
-    public String getId(){
-        return productId;
+    //copy constructor due to the relationship between order and product
+    public Product(Product product){
+        this.productId = product.productId;
+        this.name = product.name;
+        this.price = product.price;
+        this.stock = product.stock;
+        this.reviewList = new LinkedList<Review>();
     }
     public int getStock(){
         return stock;
@@ -47,23 +52,23 @@ public class Product {
             System.out.println("Erorr: Rating should be from 1 to 5!");
             return false;
         }
-        reviewList.insert(review);
+        reviewList.insertAtEnd(review);
         return true;
     }
 
     public void displayReviews(){
-        if(reviewList.empty()){
-            System.out.println("No reviews were made!");
-        }else{
-            reviewList.findFirst();
-        for (int i = 0 ; i< reviewList.getSize() ; i++) {
-            System.out.println(reviewList.retrieve().toString());
+    if(reviewList.empty()){
+        System.out.println("No reviews were made!");
+    } else {
+        reviewList.findFirst();  // Move this AFTER the empty check
+        for (int i = 0; i < reviewList.getSize(); i++) {
+            System.out.println(reviewList.retrieve());
             reviewList.findNext();
         }
-        }
     }
+}
 
-    public Review searchByReviewId(String reviewId){
+    public Review searchReviewById(String reviewId){
         if(!reviewList.empty()){
             reviewList.findFirst();
             while(!reviewList.empty()){
@@ -79,14 +84,25 @@ public class Product {
     }
 
     public boolean editReview(Review review, int newRating, String newComment){
-        if(searchByReviewId(review.getId()) == null){
+        if(searchReviewById(review.getId()) == null){
             System.out.println("Review not found!");
             return false;
         }
-        Review newReview = new Review(review.getId(), newRating, newComment, review.getCustomerId());
-        reviewList.update(newReview);
+        review.updateReview(newRating,newComment);
+        reviewList.update(review);
         return true;
     }
+
+    public boolean removeReview(Review review){
+        Review deletedReview = searchReviewById(review.getId());
+        if(deletedReview == null){
+            System.out.println("Review not found!");
+            return false;
+        }
+        reviewList.remove();
+        return true;
+    }
+    
 
     public double getAverageRating(){
         reviewList.findFirst();
@@ -96,6 +112,23 @@ public class Product {
             reviewList.findNext();
         }
         return sum/reviewList.getSize();
+    }
+
+    public void setPrice(double newPrice){
+        price = newPrice;
+    }
+
+    public LinkedList<Review> getReviewList(){
+        return reviewList;
+    }
+    public void setStock(int newStock){
+        stock = newStock;
+    }
+
+    //Phase two 
+
+    public int getProductId(){
+        return productId;
     }
 
 }

@@ -22,4 +22,8 @@ public class Review {
     public String getCustomerId(){
         return customerId;
     }
+    public void updateReview(int newRating, String newComment){
+        comment = newComment;
+        rating = newRating;
+    }
 }

@@ -27,21 +27,6 @@ public class LinkedList<T> {
         //check if not empty
         return current.next == null;
     }
-
-    public void insert(T val){
-        Node<T> tmp;
-        if(empty()){
-            head = current = new Node<T>(val);
-        }
-        else{
-            tmp = current.next;
-            current.next = new Node<T>(val);
-            current = current.next;
-            current.next = tmp;
-        }
-        size++;
-    }
-
     public void findFirst(){
         current = head;
     }
@@ -78,16 +63,6 @@ public class LinkedList<T> {
     }
     public void update(T val){
         current.data = val;
-    }
-
- 
-
-    public Node<T> getHead(){
-        return head;
-    }
-
-    public Node<T> getCurrent(){
-        return current;
     }
 
     public boolean display(){

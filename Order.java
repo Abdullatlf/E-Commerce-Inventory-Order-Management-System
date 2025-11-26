@@ -1,82 +1,86 @@
-
 import java.time.LocalDate;
 
 public class Order {
-    private String orderId;
+    //changed into integer
+    private int orderId;
     private String customerId;
     private double totalPrice;
     private LocalDate orderDate;
     private String status;
-    private LinkedList<Product> productList;
+    private BST<Integer, Product> productList;
 
-    public Order(String orderId,String customerId){
+    public Order(int orderId,String customerId){
         // I think orderId should be automaticly generated 
         // I think it will be in the main since we can count the orders
         this.orderId = orderId;
         this.customerId = customerId;
-        this.productList = new LinkedList<Product>();
+        this.productList = new BST<Integer, Product>();
         totalPrice = 0.0;
         status ="pending";
         this.orderDate = LocalDate.now();
     }
-    //need it for file data
-    public Order(String orderId, String customerId, String status){
-        this.orderId =orderId;
-        this.customerId = customerId;
-        this.productList = new LinkedList<Product>();
-        this.status = status;
-        this.totalPrice = 0.0;
-        this.orderDate = LocalDate.now();
-    }
-
     public boolean addProduct(Product product){
         //i think we can put it in main or in place order method
-        if(status.equalsIgnoreCase("shipped")){
-            System.out.println("\nOrder already shipped!\n");
-            return false;
+        String flag = status;
+        switch (flag) {
+            case"Shipped":
+                System.out.println("Order already shipped!");
+                return false;
+            case"Delivered":
+                System.out.println("Order already delivered!");
+                return false;
+            case"Cancelled":
+                System.out.println("Order cancelled!");
+                return false;
         }
 
         if(product.isOutOfStock()){
             System.out.println("\nProduct \""+ product.getName()+ "\" is out of stock!\n");
             return false;
         }
-
-        productList.insert(product);
-        totalPrice += product.getPrice();
+        Product copyProduct = new Product(product);
+        productList.insert(copyProduct.getProductId(), copyProduct);
+        totalPrice += copyProduct.getPrice();
         product.decrementStock();
         return true;
     }
 
-
-    public Product searchProductById(String productId){
-        if(!productList.empty()){ 
-            productList.findFirst();
-            while(!productList.last()){
-                if(productList.retrieve().getId().equals(productId))
-                    return productList.retrieve();
-                productList.findNext();
-            }
-            if(productList.retrieve().getId().equals(productId))
-                return productList.retrieve();
-        }
+    //in the start of the programm
+    public Product searchProductById(int productId){
+        if(productList.findKey(productId))
+            return productList.retrieve();
         return null;
     }
+    
 
-    public boolean removeProduct(String productId){
+    public boolean removeProduct(Product product){
+        Product copyProduct = new Product(product);
         //i think we can put it in main
-        if(status.equalsIgnoreCase("shipped")){
-            System.out.println("Order already shipped!");
-            return false;
+        String flag = status;
+        switch (flag) {
+            case"Shipped":
+                System.out.println("Order already shipped!");
+                return false;
+            case"Delivered":
+                System.out.println("Order already delivered!");
+                return false;
+            case"Cancelled":
+                System.out.println("Order cancelled!");
+                return false;
         }
 
-        if(/* already checked if empty*/searchProductById(productId) == null){
+        Product foundProduct = searchProductById(copyProduct.getProductId());
+
+        if( foundProduct == null){
             System.out.println("Product not found! or ProductList is empty");
             return false;
         }
-        searchProductById(productId).incrementStock();
-        totalPrice -= searchProductById(productId).getPrice();
-        productList.remove();
-        return true;
+        if(productList.remove_key(foundProduct.getProductId())){
+            product.incrementStock();
+            totalPrice -= foundProduct.getPrice();
+            return true;
+        }
+        return false;
     }
 
     public String toString() {
@@ -90,18 +94,27 @@ public class Order {
         if(productList.empty()){
             System.out.println("No product were add yet");
         }else{
-            productList.findFirst();
-        for(int i = 1; i <= productList.getSize(); i++){
-            System.out.println(productList.retrieve().toString());
-            productList.findNext();
-        }
+            System.out.println("Products in order number("+orderId+"):");
+            productList.displayTree();
         }
     }
+
+    public void displayTree(){
+
+        if(productList.empty()){
+            System.out.println("No product were add yet");
+        }else{
+            System.out.println("Products in order number("+orderId+"):");
+            productList.printTree();
+        }
+
+    }
+    
     
     public void updateOrderStatus(String status){
         this.status = status;
     }
-    public String getId(){
+    public int getOrderId(){
         return orderId;
     }
     public void setTotalPrice(double newTotalPrice){
@@ -114,8 +127,4 @@ public class Order {
     public LocalDate getOrderDate(){
         return orderDate;
     }
-    
-
-    
 }
-

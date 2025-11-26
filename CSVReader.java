@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 
 public class CSVReader{
-    //create load method for every CSV file and gather them in one loadFile method
+    
     public static void loadAllData(ECommerceSystem system){
 
         loadProductsFromCSV(system);
@@ -14,97 +14,139 @@ public class CSVReader{
         loadReviewsFromCSV(system);
         loadOrdersFromCSV(system);        
     }
-    public static void loadCustomersFromCSV(ECommerceSystem system){
-    String path = "dataset/customers.csv";
-    String line = "";
-    try{
-    BufferedReader br = new BufferedReader(new FileReader(path));
-        br.readLine();
-        while ((line = br.readLine()) != null) { 
-            String[] values = line.split(",");
-            String customerId = values[0];
-            String name = values[1];
-            String email = values[2];
-            Customer customer = new Customer(customerId, name, email);
-            system.registerCustomer(customer);
-        }
-        br.close();
-        System.out.println("Customers loaded successfully from customers.csv");
-    }catch(FileNotFoundException e){
-        e.printStackTrace();
-    }catch(IOException e){
-        e.printStackTrace();
-
-    }
-}
-
-    public static void loadReviewsFromCSV(ECommerceSystem system){
-
-    String path ="dataset/reviews.csv";
-    String line ="";
-    try{
-        BufferedReader br = new BufferedReader(new FileReader(path));
-        br.readLine();
-        while((line = br.readLine()) != null){
-            String[] values = line.split(",");
-            String reviewId = values[0];
-            String productId = values[1];
-            String customerId = values[2];
-            //maybe it needs try and catch for numberformatexception
-            int rating = Integer.parseInt(values[3]);
-            String comment = values[4];
-            Review review = new Review(reviewId, rating, comment, customerId);
-            system.addReview(review);
-            Product product = system.searchProductById(productId);
-            if (product != null) {
-                product.createReview(review);
+    
+    private static ArrayList<String> parseCSVLine(String line) {
+        int commaCount = 1;
+        boolean inQuotes = false;
+        
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (c == ',' && !inQuotes) {
+                commaCount++;
             }
         }
-        br.close();
-        System.out.println("Reviews loaded successfully from reviews.csv");
-    }catch(FileNotFoundException e){
-        e.printStackTrace();
-    }catch(IOException e){
-        e.printStackTrace();
-    }
-
-}
-
-    public static void loadProductsFromCSV(ECommerceSystem system){
-
-
-    String path = "dataset/products.csv";
-    String line ="";
-
-    try {
-        BufferedReader br = new BufferedReader(new FileReader(path));
-        br.readLine();
-        while ((line = br.readLine()) != null) { 
-            String[] values = line.split(",");
-            String productId = values[0];
-            String name = values[1];
-            //maybe need try and catch for numberformatexception
-            double price = Double.parseDouble(values[2]);
-            int stock = Integer.parseInt(values[3]);
-            Product product = new Product(productId, name, price, stock);
-            system.addProduct(product);
+        
+        ArrayList<String> values = new ArrayList<>(commaCount);
+        StringBuilder currentValue = new StringBuilder();
+        inQuotes = false;
+        
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (c == ',' && !inQuotes) {
+                values.insert(currentValue.toString());
+                currentValue = new StringBuilder();
+            } else {
+                currentValue.append(c);
+            }
         }
-
+        values.insert(currentValue.toString());
         
-        br.close();
-        System.out.println("Products loaded successfully from products.csv");
-        
-    } catch (FileNotFoundException e) {
-        e.printStackTrace();
-    }catch(IOException e){
-        e.printStackTrace();
-
+        return values;
+    }
+    
+    public static void loadCustomersFromCSV(ECommerceSystem system){
+        String path = "dataset/customers.csv";
+        String line = "";
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            br.readLine();
+            while ((line = br.readLine()) != null) { 
+                ArrayList<String> values = parseCSVLine(line);
+                
+                values.findFirst();
+                String customerId = values.retrieve();
+                values.findNext();
+                String name = values.retrieve();
+                values.findNext();
+                String email = values.retrieve();                
+                Customer customer = new Customer(customerId, name, email);
+                system.registerCustomer(customer);
+            }
+            br.close();
+            System.out.println("Customers loaded successfully from customers.csv");
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
-}
+    public static void loadReviewsFromCSV(ECommerceSystem system){
+        String path ="dataset/reviews.csv";
+        String line ="";
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            br.readLine();
+            while((line = br.readLine()) != null){
+                ArrayList<String> values = parseCSVLine(line);
+                
+                values.findFirst();
+                String reviewId = values.retrieve();
+                values.findNext();
+                int productId = Integer.parseInt(values.retrieve());
+                values.findNext();
+                String customerId = values.retrieve();
+                values.findNext();
+                int rating = Integer.parseInt(values.retrieve());
+                values.findNext();
+                String comment = values.retrieve();
+
+                //Customer customer = system.searchCustomerById(customerId);
+                
+                Review review = new Review(reviewId, rating, comment, customerId);
+                system.addReview(review);
+                Product product = system.searchProductById(productId);
+                if (product != null) {
+                    product.createReview(review);
+                }
+            }
+            br.close();
+            System.out.println("Reviews loaded successfully from reviews.csv");
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+public static void loadProductsFromCSV(ECommerceSystem system){
+        String path = "dataset/products.csv";
+        String line ="";
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            br.readLine();
+            while ((line = br.readLine()) != null) { 
+                ArrayList<String> values = parseCSVLine(line);
+                
+                values.findFirst();
+                int productId = Integer.parseInt(values.retrieve());
+                values.findNext();
+                String name = values.retrieve();
+                values.findNext();
+                double price = Double.parseDouble(values.retrieve());
+                values.findNext();
+                int stock = Integer.parseInt(values.retrieve());
+                
+                Product product = new Product(productId, name, price, stock);
+                system.addProduct(product);
+            }
+            
+            br.close();
+            System.out.println("Products loaded successfully from products.csv");
+            
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
 
     public static void loadOrdersFromCSV(ECommerceSystem system){
-
         String path="dataset/orders.csv";
         String line = "";
 
@@ -112,27 +154,55 @@ public class CSVReader{
             BufferedReader br = new BufferedReader(new FileReader(path));
             br.readLine();
             while ((line = br.readLine()) != null){ 
-                String[] values = line.split(",");
-                String orderId = values[0];
-                String customerId = values[1];
-                String productIds = values[2].replace("\"", "");
-                //maybe needs try and catch for numberformatexception
-                //double totalPrice = Double.parseDouble(values[3]);
-                LocalDate orderDate = LocalDate.parse(values[4]);
-                String status = values[5];
+                ArrayList<String> values = parseCSVLine(line);
+                
+                values.findFirst();
+                int orderId = Integer.parseInt(values.retrieve());
+                values.findNext();
+                String customerId = values.retrieve();
+                values.findNext();
+                String productIds = values.retrieve().replace("\"", "");
+                values.findNext();
+                values.findNext();
+                LocalDate orderDate = LocalDate.parse(values.retrieve());
+                values.findNext();
+                String status = values.retrieve();
 
-                Customer customer = system.searchCustomerById(customerId);
                 Order order = new Order(orderId, customerId);
-                system.addOrder(order);
-                customer.createOrder(order);
+                system.placeOrder(customerId, order);
                 order.setOrderDate(orderDate);
 
-                String []productId = productIds.split(";");
-
-                for (int i = 0; i < productId.length ;i++) {
-                    Product product = system.searchProductById(productId[i]);
-                    order.addProduct(product);
+                // Count semicolons to determine size
+                int count = 1;
+                for (int i = 0; i < productIds.length(); i++) {
+                    if (productIds.charAt(i) == ';') {
+                        count++;
+                    }
                 }
+                
+                ArrayList<String> productIdList = new ArrayList<>(count);
+                
+                int start = 0;
+                for (int i = 0; i <= productIds.length(); i++) {
+                    if (i == productIds.length() || productIds.charAt(i) == ';') {
+                        String productId = productIds.substring(start, i);
+                        productIdList.insert(productId);
+                        start = i + 1;
+                    }
+                }
+
+                productIdList.findFirst();
+                while (true) {
+                    int productId = Integer.parseInt(productIdList.retrieve());
+                    Product product = system.searchProductById(productId);
+                    order.addProduct(product);
+                    
+                    if (productIdList.last()) {
+                        break;
+                    }
+                    productIdList.findNext();
+                }
+                
                 order.updateOrderStatus(status);
             }
             br.close();
@@ -143,6 +213,5 @@ public class CSVReader{
         }catch(IOException e){
             e.printStackTrace();
         }
-
     }
 }
