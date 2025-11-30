@@ -1,4 +1,4 @@
-/*import java.time.LocalDate;
+import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
@@ -87,8 +87,9 @@ public class main {
             System.out.println("14. View Customer Reviews");
             System.out.println("\n=== Analytics & Queries ===");
             System.out.println("15. View Top 3 Products");
-            System.out.println("16. View Common Products Between Customers");
-            System.out.println("\n17. Logout");
+            System.out.println("16. View Products Between Prices");
+            System.out.println("17. View Customers Who Reviewed Product");
+            System.out.println("\n18. Logout");
             System.out.print("\nSelect option: ");
             
             int choice = getIntInput();
@@ -99,7 +100,7 @@ public class main {
                 case 3: adminUpdateProductPrice(); break;
                 case 4: adminUpdateProductStock(); break;
                 case 5: adminRemoveProduct(); break;
-                case 6: adminViewCustomers(); break;
+                case 6: adminViewCustomersAlphabetically(); break;
                 case 7: adminRegisterCustomer(); break;
                 case 8: adminViewCustomerOrders(); break;
                 case 9: adminViewOrders(); break;
@@ -109,8 +110,9 @@ public class main {
                 case 13: adminRemoveReview(); break;
                 case 14: adminViewCustomerReviews(); break;
                 case 15: adminViewTop3Products(); break;
-                case 16: adminViewCommonProducts(); break;
-                case 17: 
+                case 16: adminViewProductsBetweenPrices(); break;
+                case 17: adminViewgetCustomersWhoReviewedProduct(); break;
+                case 18: 
                     adminRunning = false;
                     System.out.println("\nLogging out...");
                     break;
@@ -128,7 +130,7 @@ public class main {
     private static void adminAddProduct() {
         System.out.println("\n=== ADD NEW PRODUCT ===");
         System.out.print("Product ID: ");
-        String id = scanner.nextLine();
+        int id = getIntInput();
         
         if (system.searchProductById(id) != null) {
             System.out.println("Product with this ID already exists!");
@@ -150,7 +152,7 @@ public class main {
     private static void adminUpdateProductPrice() {
         System.out.println("\n=== UPDATE PRODUCT PRICE ===");
         System.out.print("Enter Product ID: ");
-        String id = scanner.nextLine();
+        int id = getIntInput();
         System.out.print("Enter New Price: ");
         double price = getDoubleInput();
         system.updateProductPrice(id, price);
@@ -159,7 +161,7 @@ public class main {
     private static void adminUpdateProductStock() {
         System.out.println("\n=== UPDATE PRODUCT STOCK ===");
         System.out.print("Enter Product ID: ");
-        String id = scanner.nextLine();
+        int id = getIntInput();
         System.out.print("Enter New Stock: ");
         int stock = getIntInput();
         system.updateProductStock(id, stock);
@@ -168,13 +170,13 @@ public class main {
     private static void adminRemoveProduct() {
         System.out.println("\n=== REMOVE PRODUCT ===");
         System.out.print("Enter Product ID: ");
-        String id = scanner.nextLine();
+        int id = getIntInput();
         system.removeProduct(id);
     }
     
-    private static void adminViewCustomers() {
+    private static void adminViewCustomersAlphabetically() {
         System.out.println("\n=== ALL CUSTOMERS ===");
-        system.displayCustomers();
+        system.listCustomersAlphabetically();
     }
     
     private static void adminRegisterCustomer() {
@@ -202,13 +204,7 @@ public class main {
         System.out.print("Enter Customer ID: ");
         String id = scanner.nextLine();
         Customer customer = system.searchCustomerById(id);
-        
-        if (customer == null) {
-            System.out.println("Customer not found!");
-        } else {
-            System.out.println("\nOrders for " + customer.toString());
-            customer.displayOrders();
-        }
+        customer.displayOrders();
     }
     
     private static void adminViewOrders() {
@@ -226,17 +222,12 @@ public class main {
         try {
             LocalDate date1 = LocalDate.parse(date1Str);
             LocalDate date2 = LocalDate.parse(date2Str);
-            LinkedList<Order> orders = system.ordersBetweenTwoDates(date1, date2);
+            BST<Integer,Order> orders = system.orderBetweenTwoDates(date1, date2);
             
             if (orders.empty()) {
                 System.out.println("No orders found in this date range.");
-            } else {
-                orders.findFirst();
-                for (int i = 0; i < orders.getSize(); i++) {
-                    System.out.println(orders.retrieve());
-                    orders.findNext();
-                }
-            }
+            } else
+                orders.displayTree();
         } catch (DateTimeParseException e) {
             System.out.println("Invalid date format! Use YYYY-MM-DD");
         }
@@ -250,7 +241,7 @@ public class main {
     private static void adminViewProductReviews() {
         System.out.println("\n=== PRODUCT REVIEWS ===");
         System.out.print("Enter Product ID: ");
-        String id = scanner.nextLine();
+        int id = getIntInput();
         Product product = system.searchProductById(id);
         
         if (product == null) {
@@ -264,7 +255,7 @@ public class main {
     private static void adminRemoveReview() {
         System.out.println("\n=== REMOVE REVIEW ===");
         System.out.print("Enter Product ID: ");
-        String productId = scanner.nextLine();
+        int productId = getIntInput();
         System.out.print("Enter Review ID: ");
         String reviewId = scanner.nextLine();
         system.removeReviewFromProduct(reviewId, productId);
@@ -289,7 +280,7 @@ public class main {
     
     private static void adminViewTop3Products() {
         System.out.println("\n=== TOP 3 PRODUCTS ===");
-        LinkedList<Product> top3 = system.top3Products();
+        ArrayList<Product> top3 = system.top3ByRating();
         
         if (top3 != null && !top3.empty()) {
             top3.findFirst();
@@ -300,7 +291,7 @@ public class main {
         }
     }
     
-    private static void adminViewCommonProducts() {
+    /*private static void adminViewCommonProducts() {
         System.out.println("\n=== COMMON PRODUCTS BETWEEN CUSTOMERS ===");
         System.out.print("Enter First Customer ID: ");
         String id1 = scanner.nextLine();
@@ -319,6 +310,22 @@ public class main {
                 common.findNext();
             }
         }
+    }*/
+
+    private static void adminViewProductsBetweenPrices(){
+        System.out.println("\n=== PRODUCTS BETWEEN PRICES ===");
+        System.out.print("Enter Minimun Price: ");
+        double min = getDoubleInput();
+        System.out.print("Enter Maximum Price: ");
+        double max = getDoubleInput();
+        system.rangeQueryByPrice(min, max).displayTree();
+    }
+
+    private static void adminViewgetCustomersWhoReviewedProduct(){
+        System.out.println("\n=== CUSTOMER WHO REVIEWED PRODUCT ===");
+        System.out.print("Enter Product ID: ");
+        int productId = getIntInput();
+        system.getCustomersWhoReviewedProduct(productId).displayTree();
     }
 
     // ==================== CUSTOMER SECTION ====================
@@ -408,7 +415,7 @@ public class main {
     
     private static void customerViewProductDetails() {
         System.out.print("\nEnter Product ID: ");
-        String id = scanner.nextLine();
+        int id = getIntInput();
         Product product = system.searchProductById(id);
         
         if (product == null) {
@@ -423,7 +430,7 @@ public class main {
     
     private static void customerSearchProduct() {
         System.out.print("\nEnter Product ID to search: ");
-        String id = scanner.nextLine();
+        int id = scanner.nextInt();
         Product product = system.searchProductById(id);
         
         if (product == null) {
@@ -437,9 +444,9 @@ public class main {
     private static void customerCreateOrder(Customer customer) {
         System.out.println("\n=== CREATE NEW ORDER ===");
         System.out.print("Enter Order ID: ");
-        String orderId = scanner.nextLine();
+        int orderId = getIntInput();
         
-        Order order = new Order(orderId, customer.getId());
+        Order order = new Order(orderId, customer.getCustomerId());
         
         boolean addingProducts = true;
         while (addingProducts) {
@@ -449,7 +456,7 @@ public class main {
             if (productId.equalsIgnoreCase("done")) {
                 addingProducts = false;
             } else {
-                Product product = system.searchProductById(productId);
+                Product product = system.searchProductById(Integer.parseInt(productId));
                 if (product == null) {
                     System.out.println("Product not found!");
                 } else {
@@ -460,21 +467,21 @@ public class main {
             }
         }
         
-        system.placeOrder(customer.getId(), order);
+        system.placeOrder(customer.getCustomerId(), order);
         System.out.println("\n✓ Order created successfully!");
     }
     
     private static void customerViewOrders(Customer customer) {
         System.out.println("\n=== MY ORDERS ===");
-        customer.displayOrders();
+        system.CustomerOrderHistory(customer.getCustomerId());
     }
     
     private static void customerAddProductToOrder(Customer customer) {
         System.out.println("\n=== ADD PRODUCT TO ORDER ===");
         System.out.print("Enter Order ID: ");
-        String orderId = scanner.nextLine();
+        int orderId = getIntInput();
         System.out.print("Enter Product ID: ");
-        String productId = scanner.nextLine();
+        int productId = getIntInput();
         
         system.addProductToOrder(productId, orderId);
         System.out.println("✓ Product added to order!");
@@ -483,9 +490,9 @@ public class main {
     private static void customerRemoveProductFromOrder(Customer customer) {
         System.out.println("\n=== REMOVE PRODUCT FROM ORDER ===");
         System.out.print("Enter Order ID: ");
-        String orderId = scanner.nextLine();
+        int orderId = getIntInput();
         System.out.print("Enter Product ID: ");
-        String productId = scanner.nextLine();
+        int productId = getIntInput();
         
         system.removeProductFromOrder(productId, orderId);
     }
@@ -493,16 +500,16 @@ public class main {
     private static void customerCancelOrder(Customer customer) {
         System.out.println("\n=== CANCEL ORDER ===");
         System.out.print("Enter Order ID: ");
-        String orderId = scanner.nextLine();
+        int orderId = getIntInput();
         
-        system.cancelOrder(orderId, customer.getId());
+        system.cancelOrder(orderId, customer.getCustomerId());
         System.out.println("✓ Order cancelled!");
     }
     
     private static void customerViewOrderDetails(Customer customer) {
         System.out.println("\n=== ORDER DETAILS ===");
         System.out.print("Enter Order ID: ");
-        String orderId = scanner.nextLine();
+        int orderId = getIntInput();
         
         Order order = customer.searchOrderById(orderId);
         if (order == null) {
@@ -516,7 +523,7 @@ public class main {
     
     private static void customerViewMyReviews(Customer customer) {
         System.out.println("\n=== MY REVIEWS ===");
-        LinkedList<Review> reviews = system.getCustomerReviews(customer.getId());
+        LinkedList<Review> reviews = system.getCustomerReviews(customer.getCustomerId());
         
         if (reviews == null || reviews.empty()) {
             System.out.println("You haven't written any reviews yet.");
@@ -532,7 +539,7 @@ public class main {
     private static void customerWriteReview(Customer customer) {
         System.out.println("\n=== WRITE A REVIEW ===");
         System.out.print("Enter Product ID: ");
-        String productId = scanner.nextLine();
+        int productId = getIntInput();
         
         Product product = system.searchProductById(productId);
         if (product == null) {
@@ -547,7 +554,7 @@ public class main {
         System.out.print("Comment: ");
         String comment = scanner.nextLine();
         
-        Review review = new Review(reviewId, rating, comment, customer.getId());
+        Review review = new Review(reviewId, rating, comment, customer.getCustomerId());
         system.addReviewToProduct(review, productId);
         System.out.println("✓ Review added successfully!");
     }
@@ -555,7 +562,7 @@ public class main {
     private static void customerEditReview(Customer customer) {
         System.out.println("\n=== EDIT MY REVIEW ===");
         System.out.print("Enter Product ID: ");
-        String productId = scanner.nextLine();
+        int productId = getIntInput();
         System.out.print("Enter Review ID: ");
         String reviewId = scanner.nextLine();
         
@@ -566,7 +573,7 @@ public class main {
         }
         
         Review review = product.searchReviewById(reviewId);
-        if (review == null || !review.getCustomerId().equals(customer.getId())) {
+        if (review == null || !review.getCustomerId().equals(customer.getCustomerId())) {
             System.out.println("Review not found or you don't have permission to edit it!");
             return;
         }
@@ -583,12 +590,12 @@ public class main {
     private static void customerRemoveReview(Customer customer) {
         System.out.println("\n=== REMOVE MY REVIEW ===");
         System.out.print("Enter Product ID: ");
-        String productId = scanner.nextLine();
+        int productId = getIntInput();
         System.out.print("Enter Review ID: ");
         String reviewId = scanner.nextLine();
         
         Review review = system.searchReviewById(reviewId);
-        if (review == null || !review.getCustomerId().equals(customer.getId())) {
+        if (review == null || !review.getCustomerId().equals(customer.getCustomerId())) {
             System.out.println("Review not found or you don't have permission to remove it!");
             return;
         }
@@ -599,7 +606,7 @@ public class main {
     
     private static void customerViewProductReviews() {
         System.out.print("\nEnter Product ID: ");
-        String id = scanner.nextLine();
+        int id = getIntInput();
         Product product = system.searchProductById(id);
         
         if (product == null) {
@@ -609,7 +616,7 @@ public class main {
             System.out.println("Average Rating: " + product.getAverageRating());
             product.displayReviews();
         }
-    }
+    } 
 
     // ==================== UTILITY METHODS ====================
     
@@ -634,4 +641,4 @@ public class main {
             }
         }
     }
-}*/
+}

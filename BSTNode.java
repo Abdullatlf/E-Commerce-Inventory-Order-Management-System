@@ -8,5 +8,4 @@ public class BSTNode<K extends Comparable<K>,T> {
             left = right = null;
         }    
 
-        //copy constuctor needed later!
 }

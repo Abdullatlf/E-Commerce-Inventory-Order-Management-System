@@ -19,6 +19,15 @@ public class Order {
         status ="pending";
         this.orderDate = LocalDate.now();
     }
+    public Order(Order order){
+        this.orderId = order.orderId;
+        this.customerId = order.customerId;
+        this.productList = order.productList; 
+        this.totalPrice = order.totalPrice;   
+        this.status = order.status;
+        this.orderDate = order.orderDate;
+        this.orderDate = order.orderDate;
+    }
     public boolean addProduct(Product product){
         //i think we can put it in main or in place order method
         String flag = status;
@@ -40,10 +49,12 @@ public class Order {
         }
         Product copyProduct = new Product(product);
         productList.insert(copyProduct.getProductId(), copyProduct);
-        totalPrice += copyProduct.getPrice();
+        totalPrice += product.getPrice();
         product.decrementStock();
         return true;
     }
+
+    
 
     //in the start of the programm
     public Product searchProductById(int productId){
@@ -126,5 +137,9 @@ public class Order {
     }
     public LocalDate getOrderDate(){
         return orderDate;
+    }
+
+    public BST<Integer, Product> getProductList(){
+        return productList;
     }
 }

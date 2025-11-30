@@ -50,4 +50,15 @@ public class ArrayList<T> {
         }
     }
 
+    public void display(){
+        findFirst();
+        for(int i = 0 ; i <size;i++){
+            System.out.println(nodes[i]);
+        }
+    }
+
+    public int getSize(){
+        return size;
+    }
+
 }

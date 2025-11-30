@@ -169,10 +169,8 @@ public static void loadProductsFromCSV(ECommerceSystem system){
                 String status = values.retrieve();
 
                 Order order = new Order(orderId, customerId);
-                system.placeOrder(customerId, order);
                 order.setOrderDate(orderDate);
 
-                // Count semicolons to determine size
                 int count = 1;
                 for (int i = 0; i < productIds.length(); i++) {
                     if (productIds.charAt(i) == ';') {
@@ -204,6 +202,7 @@ public static void loadProductsFromCSV(ECommerceSystem system){
                 }
                 
                 order.updateOrderStatus(status);
+                system.placeOrder(customerId, order);
             }
             br.close();
             System.out.println("Orders loaded successfully from orders.csv");

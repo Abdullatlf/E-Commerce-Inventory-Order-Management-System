@@ -11,7 +11,7 @@ public class Customer{
         orderList = new BST<Integer,Order>();
     }
     public void createOrder(Order order){
-        Order copyOrder = new Order(order.getOrderId(), customerId);
+        Order copyOrder = new Order(order);
         orderList.insert(copyOrder.getOrderId(),copyOrder);
     } 
 
