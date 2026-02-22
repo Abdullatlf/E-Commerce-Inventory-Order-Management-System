@@ -13,8 +13,8 @@ A Java console application for managing e-commerce operations, including product
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/ecommerce-management-system.git
-cd ecommerce-management-system
+git clone https://github.com/Abdullatlf/E-Commerce-Inventory-Order-Management-System.git
+cd E-Commerce-Inventory-Order-Management-System
 ```
 
 ### 2. Prepare the dataset
